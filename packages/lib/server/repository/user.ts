@@ -196,27 +196,26 @@ export class UserRepository {
           organization: getParsedTeam(profile.organization),
         }))
       : null;
-
-    const where = profiles
-      ? {
-          // Get UserIds from profiles
-          id: {
-            in: profiles.map((profile) => profile.user.id),
-          },
-        }
-      : {
-          username: {
-            in: usernameList,
-          },
-          ...(orgSlug
-            ? {
-                organization: whereClauseForOrgWithSlugOrRequestedSlug(orgSlug),
-              }
-            : {
-                organization: null,
-              }),
-        };
-
+    const where =
+      profiles && profiles.length > 0
+        ? {
+            // Get UserIds from profiles
+            id: {
+              in: profiles.map((profile) => profile.user.id),
+            },
+          }
+        : {
+            username: {
+              in: usernameList,
+            },
+            ...(orgSlug
+              ? {
+                  organization: whereClauseForOrgWithSlugOrRequestedSlug(orgSlug),
+                }
+              : {
+                  organization: null,
+                }),
+          };
     return { where, profiles };
   }
 
@@ -246,6 +245,7 @@ export class UserRepository {
             },
           },
         },
+        createdDate: true,
       },
     });
 
