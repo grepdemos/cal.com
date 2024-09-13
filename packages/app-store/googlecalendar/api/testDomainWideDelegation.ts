@@ -14,7 +14,6 @@ function getKey() {
     process.cwd(),
     "../../packages/app-store/googlecalendar/api/service-account-key.json"
   );
-  console.log("keyPath", keyPath);
   return JSON.parse(fs.readFileSync(keyPath, "utf8"));
 }
 
