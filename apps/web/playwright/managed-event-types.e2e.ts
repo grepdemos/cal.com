@@ -34,7 +34,7 @@ async function setupManagedEvent({
   const memberUser = users.get().find((u) => u.name === teamMateName)!;
   const { team } = await adminUser.getFirstTeamMembership();
   const managedEvent = await adminUser.getFirstTeamEvent(team.id, SchedulingType.MANAGED);
-  return { adminUser, memberUser, managedEvent, teamMateName, teamEventTitle };
+  return { adminUser, memberUser, managedEvent, teamMateName, teamEventTitle, teamId: team.id };
 }
 
 /** Short hand to get elements by translation key */
@@ -167,7 +167,7 @@ test.describe("Managed Event Types", () => {
     users,
     browser,
   }) => {
-    const { adminUser, memberUser, teamEventTitle } = await setupManagedEvent({
+    const { adminUser, memberUser, teamEventTitle, teamId } = await setupManagedEvent({
       users,
       unlockedFields: {
         title: true,
@@ -186,7 +186,8 @@ test.describe("Managed Event Types", () => {
     const adminPage = await adminContext.newPage();
     const adminUserSnapshot = await adminUser.self();
     await apiLogin({ ...adminUserSnapshot, password: adminUserSnapshot.username }, adminPage);
-    await adminPage.goto("/event-types");
+    await adminPage.goto(`/event-types?teamId=${teamId}`);
+
     await adminPage.getByTestId("event-types").locator(`a[title="${teamEventTitle}"]`).click();
     await adminPage.waitForURL("event-types/**");
     await adminPage.locator('input[name="length"]').fill(`45`);
