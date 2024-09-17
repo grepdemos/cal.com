@@ -47,14 +47,14 @@ test.describe("user1NotMemberOfOrg1 is part of team1MemberOfOrg1", () => {
 
     await user1NotMemberOfOrg1.apiLogin();
     await page.goto("/event-types");
-    await page.waitForLoadState("networkidle");
 
     const userEventLinksLocators = await page
       .locator(`[data-testid="event-types"] [data-testid="preview-link-button"]`)
       .all();
 
+    // Get all the event links
+    const userEventLinksLocators = await page.locator(userEventLinksSelector).all();
     expect(userEventLinksLocators.length).toBeGreaterThan(0);
-
     for (const userEventLinkLocator of userEventLinksLocators) {
       const href = await userEventLinkLocator.getAttribute("href");
       expect(href).toContain(WEBAPP_URL);
