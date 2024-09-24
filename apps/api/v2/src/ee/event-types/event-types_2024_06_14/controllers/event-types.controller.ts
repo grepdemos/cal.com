@@ -24,7 +24,7 @@ import {
   Delete,
   Query,
 } from "@nestjs/common";
-import { ApiTags as DocsTags } from "@nestjs/swagger";
+import { ApiHeader, ApiOperation, ApiTags as DocsTags } from "@nestjs/swagger";
 
 import { EVENT_TYPE_READ, EVENT_TYPE_WRITE, SUCCESS_STATUS } from "@calcom/platform-constants";
 import {
@@ -38,13 +38,25 @@ import {
   version: VERSION_2024_06_14_VALUE,
 })
 @UseGuards(PermissionsGuard)
-@DocsTags("Event types")
+@DocsTags("Event Types")
+@ApiHeader({
+  name: "cal-api-version",
+  description: `Must be set to \`2024-06-14\``,
+  required: true,
+})
 export class EventTypesController_2024_06_14 {
   constructor(private readonly eventTypesService: EventTypesService_2024_06_14) {}
 
   @Post("/")
   @Permissions([EVENT_TYPE_WRITE])
   @UseGuards(ApiAuthGuard)
+  @ApiHeader({
+    name: "Authorization",
+    description:
+      "value must be `Bearer <token>` where `<token>` either managed user access token or api key prefixed with cal_",
+    required: true,
+  })
+  @ApiOperation({ summary: "Create an event type" })
   async createEventType(
     @Body() body: CreateEventTypeInput_2024_06_14,
     @GetUser() user: UserWithProfile
@@ -60,6 +72,13 @@ export class EventTypesController_2024_06_14 {
   @Get("/:eventTypeId")
   @Permissions([EVENT_TYPE_READ])
   @UseGuards(ApiAuthGuard)
+  @ApiHeader({
+    name: "Authorization",
+    description:
+      "value must be `Bearer <token>` where `<token>` either managed user access token or api key prefixed with cal_",
+    required: true,
+  })
+  @ApiOperation({ summary: "Get an event type" })
   async getEventTypeById(
     @Param("eventTypeId") eventTypeId: string,
     @GetUser() user: UserWithProfile
@@ -77,6 +96,7 @@ export class EventTypesController_2024_06_14 {
   }
 
   @Get("/")
+  @ApiOperation({ summary: "Get all event types" })
   async getEventTypes(
     @Query() queryParams: GetEventTypesQuery_2024_06_14
   ): Promise<GetEventTypesOutput_2024_06_14> {
@@ -91,7 +111,14 @@ export class EventTypesController_2024_06_14 {
   @Patch("/:eventTypeId")
   @Permissions([EVENT_TYPE_WRITE])
   @UseGuards(ApiAuthGuard)
+  @ApiHeader({
+    name: "Authorization",
+    description:
+      "value must be `Bearer <token>` where `<token>` either managed user access token or api key prefixed with cal_",
+    required: true,
+  })
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Update an event type" })
   async updateEventType(
     @Param("eventTypeId") eventTypeId: number,
     @Body() body: UpdateEventTypeInput_2024_06_14,
@@ -108,6 +135,13 @@ export class EventTypesController_2024_06_14 {
   @Delete("/:eventTypeId")
   @Permissions([EVENT_TYPE_WRITE])
   @UseGuards(ApiAuthGuard)
+  @ApiHeader({
+    name: "Authorization",
+    description:
+      "value must be `Bearer <token>` where `<token>` either managed user access token or api key prefixed with cal_",
+    required: true,
+  })
+  @ApiOperation({ summary: "Delete an event type" })
   async deleteEventType(
     @Param("eventTypeId") eventTypeId: number,
     @GetUser("id") userId: number
